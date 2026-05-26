@@ -96,6 +96,12 @@ Key Insight
 
 DNS traffic can be used to profile device behavior and identify unknown endpoints on a network.
 
+### DNS Query Log Example
+
+![AdGuard DNS query log](images/adguard-query-log.png)
+
+The AdGuard query log was used to investigate device-level DNS behavior by reviewing timestamps, requested domains, response status, and client IPs. This made it possible to observe both normal DNS activity and blocked requests in real time.
+
 ##Authentication & Intrusion Detection
 
 Simulated failed SSH login attempts:
