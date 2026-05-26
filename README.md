@@ -113,6 +113,18 @@ Key Insight
 
 Repeated authentication failures generate identifiable log patterns and can trigger automated defensive responses.
 
+### Failed SSH Login Attempts
+
+![Failed SSH attempts from Kali](images/fail2ban-ssh-failure.png)
+
+Failed SSH login attempts were generated from the Kali Linux VM using an invalid username. After repeated authentication failures, subsequent SSH connections timed out, indicating that the source was blocked by fail2ban.
+
+### fail2ban Status and Recovery
+
+![fail2ban status recovery](images/fail2ban-status-recovery.png)
+
+After fail2ban blocked SSH access from the source machine, administrative access was recovered through the WireGuard VPN from a phone. The `sshd` jail status confirmed failed attempts, total bans, and recovery state.
+
 ##Challenges & Lessons Learned
 Wazuh deployment failed due to hardware limitations (4GB RAM, limited disk space)
 Identified resource constraints using system monitoring tools
