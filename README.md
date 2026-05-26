@@ -71,7 +71,7 @@ The TCP SYN scan produced lower, sustained system activity with visible CPU pres
 
 ### Aggressive Scan Observation
 
-![Netdata aggressive scan metrics](images/netdata-aggressive-scan.png)
+![Netdata aggressive scan metrics](images/netdata-aggresive-scan.png)
 
 The aggressive Nmap scan produced a larger increase in CPU usage, network throughput, and system activity compared to the stealth scan.
 
