@@ -1,59 +1,74 @@
-#Home SOC Lab – Network Monitoring & Attack Simulation
+# Home SOC Lab – Network Monitoring & Attack Simulation
 
 This project is a self-built home lab designed to simulate attacker behavior and observe system and network responses in real time. The lab focuses on DNS monitoring, system telemetry, and basic intrusion detection using lightweight tools.
 
-##Objective
-Build a functional home lab to simulate common attacker behaviors
-Monitor system and network responses using real-time telemetry
-Develop foundational SOC analysis skills through hands-on testing
-Understand the impact of reconnaissance and authentication attacks on system performance
+---
 
-##Lab Architecture
+## Objective
 
-Attacker:
+- Build a functional home lab to simulate common attacker behaviors
+- Monitor system and network responses using real-time telemetry
+- Develop foundational SOC analysis skills through hands-on testing
+- Understand the impact of reconnaissance and authentication attacks on system performance
 
-Kali Linux VM (VirtualBox)
+---
 
-Target / Monitoring Node:
+## Lab Architecture
 
-Ubuntu-based server ("voidbox")
+**Attacker:**
 
-Network Components:
+- Kali Linux VM (VirtualBox)
 
-AdGuard Home – DNS filtering and query logging
-Netdata – real-time system monitoring
-WireGuard – secure remote access
-fail2ban – intrusion prevention
+**Target / Monitoring Node:**
 
-##Tools Used
+- Ubuntu-based server ("voidbox")
 
-Kali Linux – attack simulation
-Nmap – network scanning and reconnaissance
-AdGuard Home – DNS monitoring and filtering
-Netdata – system and performance monitoring
-fail2ban – intrusion detection and response
-WireGuard – VPN for secure remote access
-VirtualBox – virtualization platform
-Reconnaissance Testing (Nmap)
+**Network Components:**
+
+- AdGuard Home – DNS filtering and query logging
+- Netdata – real-time system monitoring
+- WireGuard – secure remote access
+- fail2ban – intrusion prevention
+
+---
+
+## Tools Used
+
+- Kali Linux – attack simulation
+- Nmap – network scanning and reconnaissance
+- AdGuard Home – DNS monitoring and filtering
+- Netdata – system and performance monitoring
+- fail2ban – intrusion detection and response
+- WireGuard – VPN for secure remote access
+- VirtualBox – virtualization platform
+
+---
+
+## Reconnaissance Testing (Nmap)
 
 Performed network scans against the target system:
 
-nmap -sS (stealth scan)
-nmap -A (aggressive scan)
-Observations
-Aggressive scans caused significant CPU and network spikes
-Stealth scans resulted in lower, sustained system pressure over time
-Netdata visualized real-time CPU, network, and disk impact
+- `nmap -sS 192.168.1.16` — TCP SYN / stealth scan
+- `nmap -A 192.168.1.16` — aggressive scan with service and OS detection
 
-##System Monitoring
+### Observations
+
+- Aggressive scans caused significant CPU and network spikes
+- Stealth scans resulted in lower, sustained system pressure over time
+- Netdata visualized real-time CPU, network, and disk impact
+
+---
+
+## System Monitoring
 
 Used Netdata to observe:
 
-CPU usage and load average
-Network traffic spikes during scans
-Disk I/O increases during sustained activity
-System pressure metrics under load
-Key Insight
+- CPU usage and load average
+- Network traffic spikes during scans
+- Disk I/O increases during sustained activity
+- System pressure metrics under load
+
+### Key Insight
 
 Different attack types produce distinct system behavior patterns.
 
@@ -71,7 +86,7 @@ The TCP SYN scan produced lower, sustained system activity with visible CPU pres
 
 ### Aggressive Scan Observation
 
-![Netdata aggressive scan metrics](images/netdata-aggresive-scan.png)
+![Netdata aggressive scan metrics](images/netdata-aggressive-scan.png)
 
 The aggressive Nmap scan produced a larger increase in CPU usage, network throughput, and system activity compared to the stealth scan.
 
@@ -81,18 +96,21 @@ The aggressive Nmap scan produced a larger increase in CPU usage, network throug
 
 The scan identified exposed services on the monitoring node, including SSH, DNS, and HTTP.
 
-##DNS Monitoring (AdGuard)
+---
+
+## DNS Monitoring (AdGuard)
 
 Analyzed DNS queries to identify device behavior:
 
-Identified smart home devices by traffic patterns
-Correlated DNS activity with network spikes
-Observed high-frequency query behavior from mobile devices
-Example
+- Identified smart home devices by traffic patterns
+- Correlated DNS activity with network spikes
+- Observed high-frequency query behavior from mobile devices
+
+### Example
 
 Amazon API traffic was used to identify an Alexa device without hostname data.
 
-Key Insight
+### Key Insight
 
 DNS traffic can be used to profile device behavior and identify unknown endpoints on a network.
 
@@ -102,14 +120,17 @@ DNS traffic can be used to profile device behavior and identify unknown endpoint
 
 The AdGuard query log was used to investigate device-level DNS behavior by reviewing timestamps, requested domains, response status, and client IPs. This made it possible to observe both normal DNS activity and blocked requests in real time.
 
-##Authentication & Intrusion Detection
+---
+
+## Authentication & Intrusion Detection
 
 Simulated failed SSH login attempts:
 
-Observed authentication logs in /var/log/auth.log
-Verified fail2ban detection and response
-Confirmed IP banning behavior
-Key Insight
+- Observed authentication logs in `/var/log/auth.log`
+- Verified fail2ban detection and response
+- Confirmed IP banning behavior
+
+### Key Insight
 
 Repeated authentication failures generate identifiable log patterns and can trigger automated defensive responses.
 
@@ -125,15 +146,22 @@ Failed SSH login attempts were generated from the Kali Linux VM using an invalid
 
 After fail2ban blocked SSH access from the source machine, administrative access was recovered through the WireGuard VPN from a phone. The `sshd` jail status confirmed failed attempts, total bans, and recovery state.
 
-##Challenges & Lessons Learned
-Wazuh deployment failed due to hardware limitations (4GB RAM, limited disk space)
-Identified resource constraints using system monitoring tools
-Learned to separate lightweight monitoring from heavy SIEM solutions
-Gained understanding of CPU pressure, memory usage, and disk utilization under load
-Recognized differences between loud vs. stealthy attack behavior
+---
 
-##Future Improvements
-Deploy Wazuh or SIEM on dedicated hardware
-Expand monitoring to additional endpoints
-Implement alerting for abnormal system behavior
-Simulate more advanced attack scenarios
+## Challenges & Lessons Learned
+
+- Wazuh deployment failed due to hardware limitations (4GB RAM, limited disk space)
+- Identified resource constraints using system monitoring tools
+- Learned to separate lightweight monitoring from heavy SIEM solutions
+- Gained understanding of CPU pressure, memory usage, and disk utilization under load
+- Recognized differences between loud vs. stealthy attack behavior
+- Confirmed fail2ban effectiveness by triggering an SSH ban and recovering access through a separate WireGuard VPN management path
+
+---
+
+## Future Improvements
+
+- Deploy Wazuh or another SIEM on dedicated hardware
+- Expand monitoring to additional endpoints
+- Implement alerting for abnormal system behavior
+- Simulate more advanced attack scenarios
