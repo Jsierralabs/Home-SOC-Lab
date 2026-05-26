@@ -57,6 +57,30 @@ Key Insight
 
 Different attack types produce distinct system behavior patterns.
 
+### Baseline System State
+
+![Netdata baseline metrics](images/netdata-baseline.png)
+
+Before scan testing, the monitoring node showed low CPU usage, low system load, and normal network activity.
+
+### Stealth Scan Observation
+
+![Netdata stealth scan metrics](images/netdata-stealth-scan.png)
+
+The TCP SYN scan produced lower, sustained system activity with visible CPU pressure and disk I/O changes.
+
+### Aggressive Scan Observation
+
+![Netdata aggressive scan metrics](images/netdata-aggressive-scan.png)
+
+The aggressive Nmap scan produced a larger increase in CPU usage, network throughput, and system activity compared to the stealth scan.
+
+### Nmap Scan Output
+
+![Nmap stealth scan output](images/nmap-stealth-scan-output.png)
+
+The scan identified exposed services on the monitoring node, including SSH, DNS, and HTTP.
+
 ##DNS Monitoring (AdGuard)
 
 Analyzed DNS queries to identify device behavior:
