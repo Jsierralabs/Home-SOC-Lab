@@ -126,7 +126,7 @@ The AdGuard query log was used to investigate device-level DNS behavior by revie
 
 Simulated failed SSH login attempts:
 
-- Observed authentication logs in `/var/log/auth.log`
+- Observed SSH authentication events using journalctl/systemd logs
 - Verified fail2ban detection and response
 - Confirmed IP banning behavior
 
