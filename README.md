@@ -146,6 +146,16 @@ Failed SSH login attempts were generated from the Kali Linux VM using an invalid
 
 After fail2ban blocked SSH access from the source machine, administrative access was recovered through the WireGuard VPN from a phone. The `sshd` jail status confirmed failed attempts, total bans, and recovery state.
 
+## Current Status
+
+- ✅ Ubuntu Server (voidbox)
+- ✅ WireGuard VPN
+- ✅ AdGuard Home
+- ✅ Netdata
+- ✅ Splunk Enterprise (10 GB Developer License)
+- 🔄 Universal Forwarder (In Progress)
+- ⏳ Sysmon
+- ⏳ Detection Rules
 ---
 ## Roadmap
 
