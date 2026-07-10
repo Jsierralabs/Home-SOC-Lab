@@ -147,16 +147,19 @@ Failed SSH login attempts were generated from the Kali Linux VM using an invalid
 After fail2ban blocked SSH access from the source machine, administrative access was recovered through the WireGuard VPN from a phone. The `sshd` jail status confirmed failed attempts, total bans, and recovery state.
 
 ---
+## Roadmap
 
-## Challenges & Lessons Learned
-
-- Wazuh deployment failed due to hardware limitations (4GB RAM, limited disk space)
-- Identified resource constraints using system monitoring tools
-- Learned to separate lightweight monitoring from heavy SIEM solutions
-- Gained understanding of CPU pressure, memory usage, and disk utilization under load
-- Recognized differences between loud vs. stealthy attack behavior
-- Confirmed fail2ban effectiveness by triggering an SSH ban and recovering access through a separate WireGuard VPN management path
-
+- [x] Ubuntu Server
+- [x] WireGuard
+- [x] AdGuard Home
+- [x] Netdata
+- [x] Splunk Enterprise
+- [ ] Universal Forwarder
+- [ ] Linux Log Ingestion
+- [ ] Windows Sysmon
+- [ ] Dashboards
+- [ ] Detection Rules
+- [ ] Alerting
 ---
 
 ## Future Improvements
