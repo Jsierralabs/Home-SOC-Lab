@@ -17,7 +17,7 @@
                  TCP 9997
                        │
                 ┌──────▼───────┐
-                │ Windows 11   │
+                │ Windows 10   │
                 │ Splunk Ent.  │
                 │ Search Head  │
                 │ Indexer      │
