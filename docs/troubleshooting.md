@@ -15,6 +15,7 @@ The goal is to document the reasoning process behind each fix rather than only s
 - [Fail2ban Four-Hour Timestamp Warning](#fail2ban-four-hour-timestamp-warning)
 - [Splunk Search Failed Because of an Incomplete Comparator](#splunk-search-failed-because-of-an-incomplete-comparator)
 - [Splunk Event Action Added an Exclusion Filter](#splunk-event-action-added-an-exclusion-filter)
+- [Splunk Dashboard Using WireGuard VPN](#splunk-dashboard-using-wireguard-VPN)
 - [Final Validation](#final-validation)
 
 ---
@@ -617,6 +618,15 @@ Always inspect the generated operator:
 =   include
 !=  exclude
 ```
+## Splunk Dashboard using WireGuard VPN
+
+### Symptoms
+
+After attempting to VPN into the LAN network we were able to see that the connection could not be completed. 
+
+### Cause
+```text
+UFW was confirmed to be dropping forwarded traffic.
 
 ---
 
