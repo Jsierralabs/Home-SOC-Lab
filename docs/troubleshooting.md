@@ -630,7 +630,7 @@ UFW was confirmed to be dropping forwarded traffic.
 
 ```bash
 sudo iptables -S FORWARD
-
+```
 ```text
 -P FORWARD DROP
 -A FORWARD -j ufw-before-logging-forward
@@ -640,7 +640,7 @@ sudo iptables -S FORWARD
 -A FORWARD -j ufw-reject-forward
 -A FORWARD -j ufw-track-forward
 ```
-```
+
 ---
 
 ## Final Validation
