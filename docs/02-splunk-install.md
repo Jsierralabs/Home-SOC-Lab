@@ -57,11 +57,15 @@ This keeps the infrastructure stable while allowing Splunk to perform indexing a
 
 ---
 
-## Next Steps
+## Current Status
 
-- Enable receiving on TCP 9997
-- Install Universal Forwarder on voidbox
-- Forward Linux logs
-- Install Sysmon
-- Forward Windows Event Logs
-- Build dashboards
+- [x] Installed Splunk Enterprise
+- [x] Applied the 10 GB/day Developer License
+- [x] Enabled receiving on TCP 9997
+- [x] Installed the Universal Forwarder on voidbox
+- [x] Forwarded Fail2ban logs
+- [x] Forwarded SSH and sudo journald events
+- [ ] Install and configure Sysmon
+- [ ] Ingest Windows Event Logs
+- [ ] Create Splunk alerts and detections
+- [ ] Build dashboards
