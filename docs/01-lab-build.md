@@ -4,7 +4,7 @@
 
 This Home SOC Lab was built to provide hands-on experience with security monitoring, log analysis, and system administration in a controlled environment.
 
-While pursuing a career transition into cybersecurity, I wanted practical experience using the same technologies commonly found in Security Operations Centers (SOCs). Rather than relying solely on coursework or certifications, this project focuses on learning through implementation, troubleshooting, and documentation.
+While pursuing a career transition into cybersecurity, I wanted practical experience using the same technologies commonly found in Security Operations Centers. Rather than relying solely on coursework or certifications, this project focuses on learning through implementation, troubleshooting, and documentation.
 
 The objective is not simply to install security software, but to understand:
 
