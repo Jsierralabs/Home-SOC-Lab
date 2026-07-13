@@ -15,7 +15,7 @@ The goal is to document the reasoning process behind each fix rather than only s
 - [Fail2ban Four-Hour Timestamp Warning](#fail2ban-four-hour-timestamp-warning)
 - [Splunk Search Failed Because of an Incomplete Comparator](#splunk-search-failed-because-of-an-incomplete-comparator)
 - [Splunk Event Action Added an Exclusion Filter](#splunk-event-action-added-an-exclusion-filter)
-- [Splunk Dashboard Using WireGuard VPN](#splunk-dashboard-using-wireguard-VPN)
+- [Splunk Dashboard Using WireGuard VPN](#splunk-dashboard-using-wireguard-vpn)
 - [Final Validation](#final-validation)
 
 ---
