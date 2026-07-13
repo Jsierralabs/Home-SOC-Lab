@@ -15,6 +15,7 @@ The goal is to document the reasoning process behind each fix rather than only s
 - [Fail2ban Four-Hour Timestamp Warning](#fail2ban-four-hour-timestamp-warning)
 - [Splunk Search Failed Because of an Incomplete Comparator](#splunk-search-failed-because-of-an-incomplete-comparator)
 - [Splunk Event Action Added an Exclusion Filter](#splunk-event-action-added-an-exclusion-filter)
+- [Splunk Dashboard Using WireGuard VPN](#splunk-dashboard-using-wireguard-vpn)
 - [Final Validation](#final-validation)
 
 ---
@@ -26,7 +27,7 @@ The goal is to document the reasoning process behind each fix rather than only s
 The Splunk Universal Forwarder was successfully configured to send data to the Windows Splunk Enterprise server:
 
 ```text
-192.168.1.10:9997
+192.168.1.X:9997
 ```
 
 However, the forwarding status showed:
@@ -36,7 +37,7 @@ Active forwards:
     None
 
 Configured but inactive forwards:
-    192.168.1.10:9997
+    192.168.1.X:9997
 ```
 
 This confirmed that the destination was saved, but the Universal Forwarder could not establish a TCP connection.
@@ -48,7 +49,7 @@ The Splunk Enterprise server had already been configured to receive data on TCP 
 A connection test was performed from the Ubuntu server using Bash's built-in TCP support:
 
 ```bash
-timeout 5 bash -c '</dev/tcp/192.168.1.10/9997' \
+timeout 5 bash -c '</dev/tcp/192.168.1.X/9997' \
   && echo CONNECTED || echo BLOCKED
 ```
 
@@ -73,7 +74,7 @@ The first connectivity test mistakenly targeted:
 instead of:
 
 ```text
-192.168.1.10
+192.168.1.X
 ```
 
 This caused the test to fail because the command was attempting to connect to the wrong network address.
@@ -104,7 +105,7 @@ New-NetFirewallRule `
   -Direction Inbound `
   -Protocol TCP `
   -LocalPort 9997 `
-  -RemoteAddress 192.168.1.16 `
+  -RemoteAddress 192.168.1.Y `
   -Action Allow `
   -Profile Private
 ```
@@ -113,13 +114,13 @@ The rule allows only:
 
 - Inbound TCP traffic
 - Destination port `9997`
-- Traffic from the Ubuntu server at `192.168.1.16`
+- Traffic from the Ubuntu server at `192.168.1.Y`
 - Traffic while the Windows network uses the Private profile
 
 The connection test was then repeated using the correct IP address:
 
 ```bash
-timeout 5 bash -c '</dev/tcp/192.168.1.10/9997' \
+timeout 5 bash -c '</dev/tcp/192.168.1.X/9997' \
   && echo CONNECTED || echo BLOCKED
 ```
 
@@ -140,7 +141,7 @@ Final result:
 
 ```text
 Active forwards:
-    192.168.1.10:9997
+    192.168.1.X:9997
 ```
 
 ### Lesson Learned
@@ -199,7 +200,7 @@ Remove-NetFirewallRule -Name "{RULE-GUID}"
 The correct rule was then created as a single command:
 
 ```powershell
-New-NetFirewallRule -DisplayName "Splunk Forwarder TCP 9997" -Direction Inbound -Protocol TCP -LocalPort 9997 -RemoteAddress 192.168.1.16 -Action Allow -Profile Private
+New-NetFirewallRule -DisplayName "Splunk Forwarder TCP 9997" -Direction Inbound -Protocol TCP -LocalPort 9997 -RemoteAddress 192.168.1.Y -Action Allow -Profile Private
 ```
 
 The completed rule was verified:
@@ -228,7 +229,7 @@ Expected values:
 ```text
 Protocol      : TCP
 LocalPort     : 9997
-RemoteAddress : 192.168.1.16
+RemoteAddress : 192.168.1.Y
 Profile       : Private
 Direction     : Inbound
 Action        : Allow
@@ -617,6 +618,84 @@ Always inspect the generated operator:
 =   include
 !=  exclude
 ```
+## Splunk Dashboard using WireGuard VPN
+
+## Symptoms 
+
+After connecting to the home network thorugh WireGuard, the Splunk Web Dashboard at http:192.168.1.X:8000 could not be reached from the phone.
+
+The phone could reach the WireGuard server itself, but it could not reach the Windows Splunk host on the LAN
+
+##Cause
+
+UFW was confrimed to be dropping forwarded traffic.
+
+The WireGuard tunnel was active, but the default forwarding policy wasset to drop:
+
+```bash
+sudo iptables -S FORWARD
+```
+
+```text
+-P FORWARD DROP
+-A FORWARD -j ufw-before-logging-forward
+-A FORWARD -j ufw-before-forward
+-A FORWARD -j ufw-after-forward
+-A FORWARD -j ufw-after-logging-forward
+-A FORWARD -j ufw-reject-forward
+-A FORWARD -j ufw-track-forward
+```
+
+NAT was already configured correctly:
+
+```bash
+sudo iptables -t nat -S POSTROUTING
+```
+
+```text
+-P POSTROUTING ACCEPT
+-A POSTROUTING -o wlo1 -j MASQUERADE
+```
+
+## Resolution 
+
+```bash
+sudo ufw route allow in on wg0 out on wlo1 from 10.0.0.0/24 to 192.168.1.X port 8000 proto tcp
+```
+UFW was then reloaded:
+
+```bash
+sudo ufw reload
+```
+
+The Windows Firewall was also configured to allow Splunk Web traffic from the WireGuard subnet and the Ubuntu server:
+
+```powershell
+Set-NetFirewallRule -DisplayName "Splunk Web TCP 8000 - WireGuard" -RemoteAddress 10.0.0.0/24,192.168.1.Y
+```
+
+### Validation
+
+After reconnecting the phone to WireGuard, the Splunk Web dashboard loaded successfully at:
+
+```text
+http://192.168.1.X:8000
+```
+
+### Lesson Learned
+
+A successful WireGuard handshake only confirms that the VPN tunnel is active.
+
+It does not confirm that traffic is allowed to pass through the VPN server to other LAN devices.
+
+For remote access through WireGuard, the following must all be configured correctly:
+
+1. Client routing through `AllowedIPs`
+2. IP forwarding on the WireGuard server
+3. NAT or masquerading
+4. UFW forwarding rules
+5. Destination host firewall rules
+6. The destination service listening on the required port
 
 ---
 
