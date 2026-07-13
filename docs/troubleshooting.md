@@ -628,6 +628,19 @@ After attempting to VPN into the LAN network we were able to see that the connec
 ```text
 UFW was confirmed to be dropping forwarded traffic.
 
+```bash
+sudo iptables -S FORWARD
+
+```text
+-P FORWARD DROP
+-A FORWARD -j ufw-before-logging-forward
+-A FORWARD -j ufw-before-forward
+-A FORWARD -j ufw-after-forward
+-A FORWARD -j ufw-after-logging-forward
+-A FORWARD -j ufw-reject-forward
+-A FORWARD -j ufw-track-forward
+```
+```
 ---
 
 ## Final Validation
