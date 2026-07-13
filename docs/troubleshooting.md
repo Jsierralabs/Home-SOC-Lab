@@ -26,7 +26,7 @@ The goal is to document the reasoning process behind each fix rather than only s
 The Splunk Universal Forwarder was successfully configured to send data to the Windows Splunk Enterprise server:
 
 ```text
-192.168.1.10:9997
+192.168.1.X:9997
 ```
 
 However, the forwarding status showed:
@@ -36,7 +36,7 @@ Active forwards:
     None
 
 Configured but inactive forwards:
-    192.168.1.10:9997
+    192.168.1.X:9997
 ```
 
 This confirmed that the destination was saved, but the Universal Forwarder could not establish a TCP connection.
@@ -48,7 +48,7 @@ The Splunk Enterprise server had already been configured to receive data on TCP 
 A connection test was performed from the Ubuntu server using Bash's built-in TCP support:
 
 ```bash
-timeout 5 bash -c '</dev/tcp/192.168.1.10/9997' \
+timeout 5 bash -c '</dev/tcp/192.168.1.X/9997' \
   && echo CONNECTED || echo BLOCKED
 ```
 
@@ -73,7 +73,7 @@ The first connectivity test mistakenly targeted:
 instead of:
 
 ```text
-192.168.1.10
+192.168.1.X
 ```
 
 This caused the test to fail because the command was attempting to connect to the wrong network address.
@@ -104,7 +104,7 @@ New-NetFirewallRule `
   -Direction Inbound `
   -Protocol TCP `
   -LocalPort 9997 `
-  -RemoteAddress 192.168.1.16 `
+  -RemoteAddress 192.168.1.Y `
   -Action Allow `
   -Profile Private
 ```
@@ -113,13 +113,13 @@ The rule allows only:
 
 - Inbound TCP traffic
 - Destination port `9997`
-- Traffic from the Ubuntu server at `192.168.1.16`
+- Traffic from the Ubuntu server at `192.168.1.Y`
 - Traffic while the Windows network uses the Private profile
 
 The connection test was then repeated using the correct IP address:
 
 ```bash
-timeout 5 bash -c '</dev/tcp/192.168.1.10/9997' \
+timeout 5 bash -c '</dev/tcp/192.168.1.X/9997' \
   && echo CONNECTED || echo BLOCKED
 ```
 
@@ -140,7 +140,7 @@ Final result:
 
 ```text
 Active forwards:
-    192.168.1.10:9997
+    192.168.1.X:9997
 ```
 
 ### Lesson Learned
@@ -199,7 +199,7 @@ Remove-NetFirewallRule -Name "{RULE-GUID}"
 The correct rule was then created as a single command:
 
 ```powershell
-New-NetFirewallRule -DisplayName "Splunk Forwarder TCP 9997" -Direction Inbound -Protocol TCP -LocalPort 9997 -RemoteAddress 192.168.1.16 -Action Allow -Profile Private
+New-NetFirewallRule -DisplayName "Splunk Forwarder TCP 9997" -Direction Inbound -Protocol TCP -LocalPort 9997 -RemoteAddress 192.168.1.Y -Action Allow -Profile Private
 ```
 
 The completed rule was verified:
@@ -228,7 +228,7 @@ Expected values:
 ```text
 Protocol      : TCP
 LocalPort     : 9997
-RemoteAddress : 192.168.1.16
+RemoteAddress : 192.168.1.Y
 Profile       : Private
 Direction     : Inbound
 Action        : Allow
