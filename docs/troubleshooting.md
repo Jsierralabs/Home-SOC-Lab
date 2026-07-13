@@ -15,6 +15,7 @@ The goal is to document the reasoning process behind each fix rather than only s
 - [Fail2ban Four-Hour Timestamp Warning](#fail2ban-four-hour-timestamp-warning)
 - [Splunk Search Failed Because of an Incomplete Comparator](#splunk-search-failed-because-of-an-incomplete-comparator)
 - [Splunk Event Action Added an Exclusion Filter](#splunk-event-action-added-an-exclusion-filter)
+- [Splunk Dashboard Using WireGuard VPN](#splunk-dashboard-using-wireguard-vpn)
 - [Final Validation](#final-validation)
 
 ---
@@ -617,6 +618,127 @@ Always inspect the generated operator:
 =   include
 !=  exclude
 ```
+
+---
+
+
+## Splunk Dashboard Using WireGuard VPN
+
+### Symptoms
+
+After connecting to the home network through WireGuard, the Splunk Web dashboard at `http://192.168.1.X:8000` could not be reached from the phone.
+
+The phone could reach the WireGuard server itself, but it could not reach the Windows Splunk host on the LAN.
+
+### Cause
+
+UFW was confirmed to be dropping forwarded traffic.
+
+The WireGuard tunnel was active, but the default forwarding policy was set to drop:
+
+```bash
+sudo iptables -S FORWARD
+```
+
+```text
+-P FORWARD DROP
+-A FORWARD -j ufw-before-logging-forward
+-A FORWARD -j ufw-before-forward
+-A FORWARD -j ufw-after-forward
+-A FORWARD -j ufw-after-logging-forward
+-A FORWARD -j ufw-reject-forward
+-A FORWARD -j ufw-track-forward
+```
+
+NAT was already configured correctly:
+
+```bash
+sudo iptables -t nat -S POSTROUTING
+```
+
+```text
+-P POSTROUTING ACCEPT
+-A POSTROUTING -o wlo1 -j MASQUERADE
+```
+
+Splunk Web was also confirmed to be listening on all IPv4 interfaces:
+
+```powershell
+Get-NetTCPConnection -LocalPort 8000 -State Listen
+```
+
+```text
+LocalAddress : 0.0.0.0
+LocalPort    : 8000
+State        : Listen
+```
+
+### Resolution
+
+A Windows Firewall rule was created to allow Splunk Web traffic from the WireGuard subnet:
+
+```powershell
+New-NetFirewallRule -DisplayName "Splunk Web TCP 8000 - WireGuard" -Direction Inbound -Protocol TCP -LocalPort 8000 -RemoteAddress 10.0.0.0/24 -Action Allow -Profile Private
+```
+
+Because WireGuard traffic was being NATed through `voidbox`, the Ubuntu server address was also added to the rule:
+
+```powershell
+Set-NetFirewallRule -DisplayName "Splunk Web TCP 8000 - WireGuard" -RemoteAddress 10.0.0.0/24,192.168.1.Y
+```
+
+A UFW route rule was then added on `voidbox` to allow WireGuard traffic to reach the Windows Splunk host on TCP port `8000`:
+
+```bash
+sudo ufw route allow in on wg0 out on wlo1 from 10.0.0.0/24 to 192.168.1.X port 8000 proto tcp
+```
+
+UFW was reloaded:
+
+```bash
+sudo ufw reload
+```
+
+### Validation
+
+After reconnecting the phone to WireGuard, the Splunk Web dashboard loaded successfully at:
+
+```text
+http://192.168.1.X:8000
+```
+
+The final traffic path was:
+
+```text
+Phone
+  ↓
+WireGuard tunnel
+  ↓
+voidbox
+  ↓
+UFW routed allow rule
+  ↓
+NAT through wlo1
+  ↓
+Windows Splunk host
+  ↓
+Splunk Web on TCP 8000
+```
+
+### Lesson Learned
+
+A successful WireGuard handshake only confirms that the VPN tunnel is active.
+
+It does not confirm that traffic is allowed to pass through the VPN server to other LAN devices.
+
+For remote access through WireGuard, the following must all be configured correctly:
+
+1. Client routing through `AllowedIPs`
+2. IP forwarding on the WireGuard server
+3. NAT or masquerading
+4. UFW forwarding rules
+5. Destination host firewall rules
+6. The destination service listening on the required port
 
 ---
 
