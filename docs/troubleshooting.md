@@ -12,7 +12,6 @@ The goal is to document the reasoning process behind each fix rather than only s
 
 The Splunk Universal Forwarder was successfully configured to send data to the Windows Splunk Enterprise server:
 
-```text
 192.168.1.10:9997
 
 However, the forwarding status showed:
