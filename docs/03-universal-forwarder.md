@@ -1,24 +1,16 @@
+# Splunk Universal Forwarder
+
 ## Deployment Summary
 
-Platform:
-- Ubuntu 24.04 LTS
+| Item | Value |
+|---|---|
+| Platform | Ubuntu 24.04 LTS |
+| Role | Log collection |
+| Destination | Splunk Enterprise |
+| Forwarding Protocol | TCP 9997 |
+| Current Data Sources | Fail2ban, SSH journald, sudo journald |
+| Status | Operational |
 
-Role:
-- Log Collection
-
-Destination:
-- Splunk Enterprise
-
-Forwarding Protocol:
-- TCP 9997
-
-Current Data Sources:
-- Fail2ban
-- SSH Journald
-- sudo Journald
-
-Status:
-- Operational
 ---
 
 # Splunk Universal Forwarder
