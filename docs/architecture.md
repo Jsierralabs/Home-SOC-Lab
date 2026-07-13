@@ -1,16 +1,20 @@
+```text
                     Internet
                         │
-             Remote SSH / VPN
+              SSH / WireGuard VPN
                         │
                 ┌──────────────┐
                 │   voidbox    │
                 │ Ubuntu 24.04 │
                 ├──────────────┤
-                │ AdGuard      │
+                │ AdGuard Home │
                 │ WireGuard    │
                 │ Netdata      │
                 │ SSH          │
-                │ UF           │
+                │ Splunk UF    │
+                │ Fail2ban     │
+                │ Journald     │
+                │ sudo / SSH   │
                 └──────┬───────┘
                        │
              Splunk Forwarding
@@ -19,10 +23,11 @@
                 ┌──────▼───────┐
                 │ Windows 10   │
                 │ Splunk Ent.  │
+                ├──────────────┤
                 │ Search Head  │
                 │ Indexer      │
-                └──────┬───────┘
-                       │
-                 Windows Logs
-                 Sysmon
-                 Defender
+                │ Windows Logs │
+                │ Sysmon       │
+                │ Defender     │
+                └──────────────┘
+```
