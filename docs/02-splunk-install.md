@@ -68,4 +68,4 @@ This keeps the infrastructure stable while allowing Splunk to perform indexing a
 - [ ] Install and configure Sysmon
 - [ ] Ingest Windows Event Logs
 - [ ] Create Splunk alerts and detections
-- [ ] Build dashboards
+- [x] Build dashboards
